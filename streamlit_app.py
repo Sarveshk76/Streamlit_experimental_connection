@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
 import pandas as pd
 import streamlit as st
 from sqlalchemy.sql import text
@@ -80,8 +80,8 @@ if submit:
 # tab2 - order list
 tab2.title('Order List')
 order = conn.query('select * from orders')
-refresh = tab2.button('Refresh')
-if refresh:
+refresh_list = tab2.button('Refresh List')
+if refresh_list:
     order = conn.query('select * from orders')
 tab2.dataframe(order)
 
@@ -93,11 +93,12 @@ data = data.groupby(['order_date']).size().reset_index(name='order_table')
 data['order_date'] = pd.to_datetime(data['order_date'])
 data['order_date'] = data['order_date'].dt.strftime('%Y-%m-%d')
 data = data.rename(columns={'order_table': 'order_count'})
-refresh = tab3.button('Refresh')
-if refresh:
+refresh_chart = tab3.button('Refresh Charts')
+if refresh_chart:
     data = pd.DataFrame(weekly_report)
     data = data.groupby(['order_date']).size().reset_index(name='order_table')
     data['order_date'] = pd.to_datetime(data['order_date'])
+    print(data['order_date'])
     data['order_date'] = data['order_date'].dt.strftime('%Y-%m-%d')
     data = data.rename(columns={'order_table': 'order_count'})
 tab3.bar_chart(data=data, x='order_date', y='order_count', )
